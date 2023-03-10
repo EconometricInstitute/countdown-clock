@@ -1,4 +1,6 @@
-# default
+# Countdown Clock
+
+A countdown timer that can be embedded in external sites.
 
 ## Project setup
 
