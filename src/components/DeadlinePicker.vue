@@ -29,19 +29,20 @@
                         iframe code that can be pasted into Canvas or some other application.
                         <br />
                         <v-select
-                            v-model="currentDims"
                             :items="dimensions"
                             label="Choose a size for the iframe"
                             item-title="label"
                             persistent-hint
                             return-object
                             single-line
+                            @update:modelValue="setDims"
                         />
                     </v-card-text>
                     <v-card-actions>
                         <v-btn color="primary" target="_blank" :href="link">Open preview</v-btn>
                         <v-btn color="primary" @click="copyLink">Copy link</v-btn>
-                        <v-btn color="primary" :disabled="!currentDims" @click="copyIframe">Copy iframe</v-btn>
+                        <v-btn color="primary" :disabled="!currentDims.width || !currentDims.height" @click="copyHtml(false)">Copy iframe</v-btn>
+                        <v-btn color="primary" :disabled="!currentDims.width || !currentDims.height" @click="copyHtml(true)">Copy HTML</v-btn>
                     </v-card-actions>
                 </v-card>
             </v-col>         
@@ -82,22 +83,32 @@
                 { label: 'Medium', dims: { width: '500px', height: '200px' }},
                 { label: 'Large', dims: { width: '800px', height: '300px' }},
             ],
-            currentDims: null
+            currentDims: {width: '', height: ''}
         }),
         methods: {
-            iframeCode(dims) {
-                return `<p><iframe title="Countdown Clock" width="${dims.width}" height="${dims.height}" src="${this.link}"></iframe></p>`;
+            iframeCode() {
+                const {width, height} = this.currentDims;
+                return `<p><iframe title="Countdown Clock" width="${width}" height="${height}" src="${this.link}"></iframe></p>`;
             },
             copyLink() {
                 copyToClipboard(this.link);
                 this.snackbarText = 'Link copied to the clipboard.';
                 this.snackbar = true;
             },
-            copyIframe() {
-                const text = this.iframeCode(this.currentDims.dims);
-                copyToClipboard(text, { format: 'text/html' });
+            copyHtml(raw: boolean) {
+                const text = this.iframeCode();
+                if (raw) {
+                    copyToClipboard(text);
+                }
+                else {
+                    copyToClipboard(text, { format: 'text/html' });
+                }
                 this.snackbarText = 'Code for iframe copied to the clipboard.';
                 this.snackbar = true;                
+            },
+            setDims(dims: any) {
+                console.log(dims);
+                this.currentDims = dims.dims;
             }
         },
         computed: {

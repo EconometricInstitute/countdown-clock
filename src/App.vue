@@ -13,7 +13,8 @@
   import DeadlinePicker from '@/components/DeadlinePicker.vue'
 
   const params = new URLSearchParams(window.location.search);
-  const deadline = params.get('deadline');
+  const param = params.get('deadline');
+  const deadline = param ? parseFloat(param) : 0;
   
   export default defineComponent({
     components: {
